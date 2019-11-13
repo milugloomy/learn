@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="divBody"></div>
+<script src="vue.js"></script>
+<script>
+// function Page (obj) {
+//   obj.load()
+//   obj.show()
+//   this.data = {}
+// }
+//
+// Page.prototype.setData = function (key, val) {
+//   this.data = {
+//     [key]: val
+//   }
+// }
+//
+// let options = {
+//   load () {
+//     this.setData('a', 1)
+//   },
+//   show () {
+//     console.log(this)
+//     console.log(this === options)
+//     console.log(this.data.a)
+//   }
+// }
+//
+// new Page(options)
+
+// function Page (obj) {
+//   Object.assign(this, obj)
+//   obj.load.call(this)
+//   obj.show.call(this)
+//   this.data = {}
+// }
+//
+// Page.prototype.setData = function (key, val) {
+//   this.data = {
+//     [key]: val
+//   }
+// }
+//
+// let options = {
+//   load () {
+//     debugger
+//     this.setData('a', 1)
+//   },
+//   show () {
+//     console.log(this)
+//     console.log(this === options)
+//     console.log(this.data.a)
+//   }
+// }
+//
+// new Page(options)
+
+Vue.prototype.setData = function (key, val) {
+  if (this.data) {
+    this.data[key] = val
+  } else {
+    this.data = {
+      [key]: val
+    }
+  }
+}
+
+let options = {
+  el: '#divBody',
+  created: function () {
+    this.setData('a', 1)
+  },
+  mounted () {
+    console.log(this)
+    console.log(this === options)
+    console.log(this.data.a)
+  }
+}
+
+new Vue(options)
+
+</script>
+</body>
+</html>
