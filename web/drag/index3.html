@@ -1,0 +1,217 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+  <title>拖动</title>
+  <style>
+  body {
+    margin: 0 auto;
+  }
+  ul {
+    float: left;
+    list-style: none;
+    padding-left: 0;
+    width: 90vw;
+    margin: 6vw 3vw 0 6vw;
+  }
+  ul li {
+    float: left;
+    width: 28vw;
+    height: 16.8vw;
+    margin-right: 2vw;
+    margin-bottom: 2vw;
+  }
+  ul li .item {
+    width: 28vw;
+    height: 16.8vw;
+  }
+  ul li .item img {
+    width: inherit;
+    height: inherit;
+    border-radius: 6px;
+  }
+  </style>
+</head>
+<body>
+<div style="height:200px;width:100%;"></div>
+<ul class="item_content">
+  <li>
+    <div class="item">
+      <img src="images/1_360.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/2_360game.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/3_fenghuan.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/4_jd.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/5_renren.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/6_souhu.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/7_taobao.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/8_wangyi.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/9_xinlan.png"/>
+    </div>
+  </li>
+  <li>
+    <div class="item">
+      <img src="images/10_youku.png"/>
+    </div>
+  </li>
+</ul>
+<script type="text/javascript">
+HTMLDivElement.prototype.longPress = function (fn) {
+  let timeout
+  this.addEventListener('touchstart', function (event) {
+    timeout = setTimeout(fn, 800)
+  }, false)
+  this.addEventListener('touchend', function (event) {
+    clearTimeout(timeout)
+  }, false)
+}
+
+window.onload = function () {
+  // document.querySelectorAll('.item')是个类数组，将其转换为数组
+  let items = Array.prototype.slice.call(document.querySelectorAll('.item'))
+  let itemPositions = []
+  for (let i = 0; i < items.length; i++) {
+    let element = items[i]
+    element.style.position = 'absolute'
+    element.style.left = element.offsetLeft + 'px'
+    element.style.top = element.offsetTop + 'px'
+    itemPositions.push({
+      left: element.offsetLeft,
+      top: element.offsetTop
+    })
+    drag(element)
+  }
+
+  function drag (ele) {
+    let startX, startY    // 起始鼠标触点坐标
+    let offsetX, offsetY  // 起始对象距左，距上距离
+    let movObj = { index: undefined, moving: false } // 最开始移动的index
+    let touchIndex  // 选择第几个
+    ele.addEventListener('touchstart', function (event) {
+      for (let i = 0; i < items.length; i++) {
+        if (items[i] === this) {
+          touchIndex = i
+          break
+        }
+      }
+      startX = event.touches[0].pageX
+      startY = event.touches[0].pageY
+      offsetX = this.offsetLeft
+      offsetY = this.offsetTop
+      this.style.opacity = '0.5'
+      this.style.position = 'absolute'
+      this.style.zIndex = '100'
+    }, false)
+    ele.addEventListener('touchmove', function (event) {
+      // 触点坐标
+      let x = event.touches[0].pageX
+      let y = event.touches[0].pageY
+      // 移动当前目标
+      this.style.left = (offsetX + x - startX) + 'px'
+      this.style.top = (offsetY + y - startY) + 'px'
+      // 判断有无碰撞
+      for (let i = 0; i < items.length; i++) {
+        let item = items[i]
+        // 是自己不判断
+        if (item === this) continue
+        if (x > item.offsetLeft && x < (item.offsetLeft + item.offsetWidth) &&
+          y > item.offsetTop && y < (item.offsetTop + item.offsetHeight) &&
+          movObj.index !== i && movObj.moving === false
+        ) {
+          movObj = { index: i, moving: true }
+          swapArray(touchIndex, i)
+          moving(this, () => {
+            movObj.moving = false
+            touchIndex = i
+          })
+          break
+        }
+      }
+    }, false)
+    ele.addEventListener('touchend', function (event) {
+      moving(null, () => {
+        this.style.opacity = '1'
+        this.style.zIndex = ''
+        movObj = { index: undefined, moving: false }
+      })
+    }, false)
+  }
+
+  function moving (touchObj, fn) {
+    let count = 25
+    let interval = setInterval(() => {
+      if (count > 0) {
+        for (let i = 0; i < items.length; i++) {
+          let item = items[i]
+          if (item === touchObj) {
+            continue
+          }
+          let left = Number(item.style.left.replace('px', ''))
+          let top = Number(item.style.top.replace('px', ''))
+          let targetLeft = itemPositions[i].left
+          let targetTop = itemPositions[i].top
+          item.style.left = (left + (targetLeft - left) / count) + 'px'
+          item.style.top = (top + (targetTop - top) / count) + 'px'
+        }
+        count--
+      } else {
+        clearInterval(interval)
+        fn && fn()
+      }
+    }, 20)
+  }
+
+  function swapArray (touchIndex, targetIndex) {
+    if (touchIndex > targetIndex) {
+      let temp = items[touchIndex]
+      for (let i = touchIndex; i > targetIndex; i--) {
+        items[i] = items[i - 1]
+      }
+      items[targetIndex] = temp
+    }
+    if (touchIndex < targetIndex) {
+      let temp = items[touchIndex]
+      for (let i = touchIndex; i < targetIndex; i++) {
+        items[i] = items[i + 1]
+      }
+      items[targetIndex] = temp
+    }
+  }
+}
+</script>
+</body>
+</html>
