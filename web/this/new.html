@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
 <body>
-<div id="divBody"></div>
+<div id="divBody">
+  <div v-on:click="click123(),click1234()" style="background: red; width: 100px; height: 100px;"></div>
+  <div v-on:click="fuck='12345'" style="background: black; width: 100px; height: 100px;"></div>
+  <div v-if="fuck=='12345'" style="background: blue; width: 100px; height: 100px;"></div>
+</div>
 <script src="vue.js"></script>
 <script>
 // function Page (obj) {
@@ -72,6 +76,16 @@ Vue.prototype.setData = function (key, val) {
 
 let options = {
   el: '#divBody',
+  data(){
+    return{
+      fuck: '12'
+    }
+  },
+  beforeCreate: function () {
+  },
+  beforeMount: function () {
+    debugger
+  },
   created: function () {
     this.setData('a', 1)
   },
@@ -79,6 +93,14 @@ let options = {
     console.log(this)
     console.log(this === options)
     console.log(this.data.a)
+  },
+  methods: {
+    click123: function () {
+      debugger
+    },
+    click1234: function () {
+      debugger
+    },
   }
 }
 

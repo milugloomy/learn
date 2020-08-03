@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<input type="file" id="file">
+<script type="text/javascript" src="jsZip.js"></script>
+<script type="text/javascript" src="fileSaver.js"></script>
+<script type="text/javascript">
+let zip = new JSZip();
+document.querySelector("#file").addEventListener("change", function () {
+  let file = document.querySelector("#file").files[0];
+  zip.file(file.name, file)
+  zip.generateAsync({compression: 'DEFLATE', type: "blob"}).then(function (content) {
+    saveAs(content, "example.zip")
+  })
+})
+
+</script>
+</body>
+</html>

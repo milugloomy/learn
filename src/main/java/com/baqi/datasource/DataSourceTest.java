@@ -1,7 +1,11 @@
 package com.baqi.datasource;
 
+import com.alibaba.druid.filter.Filter;
+import com.alibaba.druid.filter.FilterAdapter;
+import com.alibaba.druid.filter.FilterChain;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
+import com.alibaba.druid.pool.GetConnectionTimeoutException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -58,19 +62,38 @@ public class DataSourceTest {
         ds.maxOpenPreparedStatements:100
         ds.filters:wall,stat*/
 
+        /*DruidDataSource dataSource = new DruidDataSource(){
+            @Override
+            public DruidPooledConnection getConnection(long maxWaitMillis) throws SQLException{
+                int activeCount = this.getActiveCount();
+                System.out.println("---------------Druid Warning,the current active count of Druid Connection Pool is "+activeCount+"!");
+                return super.getConnection(maxWaitMillis);
+            }
+        };*/
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUrl("jdbc:mysql://47.105.145.227:3306/base_db_2?allowMultiQueries=true&serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false");
         dataSource.setUsername("aikang_rw");
         dataSource.setPassword("TOsX@r44f4");
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setInitialSize(1);
-        dataSource.setMaxActive(6);
-        dataSource.setMaxWait(2000);
+        dataSource.setInitialSize(1);   //初始连接数
+        dataSource.setMaxActive(2);     //最大连接数
+        dataSource.setMaxWait(2000);    //获取连接时间
         dataSource.setMinIdle(1);
         dataSource.setTestWhileIdle(true);
         dataSource.setTestOnBorrow(false);
         dataSource.setTestOnReturn(false);
         dataSource.setMaxOpenPreparedStatements(2);
+        List<Filter> filters = new ArrayList<Filter>();
+        filters.add(new FilterAdapter(){
+            @Override
+            public DruidPooledConnection dataSource_getConnection(FilterChain chain, DruidDataSource dataSource,
+                                                                  long maxWaitMillis) throws SQLException {
+                int activeCount = dataSource.getActiveCount();
+                System.out.println("Druid Warning,the current active count of Druid Connection Pool is "+activeCount+"!");
+                return chain.dataSource_connect(dataSource, maxWaitMillis);
+            }
+        });
+        dataSource.setProxyFilters(filters);
 
         Integer[] params = new Integer[]{4152, 4157, 4237, 4293, 4322};
         CountDownLatch latch = new CountDownLatch(params.length);
@@ -79,10 +102,15 @@ public class DataSourceTest {
             final Integer index = i;
             fixedThreadPool.submit(() -> {
                 DruidPooledConnection conn = null;
-                try {
-                    conn = dataSource.getConnection();
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                while (conn == null) {
+                    try {
+                        conn = dataSource.getConnection();
+                    } catch (GetConnectionTimeoutException e) {
+                        continue;
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                        return;
+                    }
                 }
                 while (true) {
                     try {
@@ -101,6 +129,12 @@ public class DataSourceTest {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
             });
         }

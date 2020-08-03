@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+let es = new EventSource('http://localhost:9998/im/heart/list')
+es.onopen = function () {
+  console.log('连接上')
+}
+es.onerror = function (err) {
+  console.log(err)
+}
+es.onmessage = function (e) {
+  console.log(e)
+}
+</script>
+</html>
