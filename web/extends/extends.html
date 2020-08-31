@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+function NoAlertError () {
+}
+// eslint-disable-next-line no-proto
+// NoAlertError.prototype.__proto__ = Error.prototype
+// NoAlertError.prototype.__proto__ = new Error().__proto__
+NoAlertError.prototype = new Error()
+NoAlertError.prototype.constructor = NoAlertError
+NoAlertError.NO_LOGIN = '未登录'
+let e = new NoAlertError()
+console.log(e)
+</script>
+</body>
+</html>

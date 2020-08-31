@@ -43,23 +43,25 @@ import java.util.List;
  */
 public class CherryPick {
 
-    private String username;
-    private String password;
-    private String comment;
+    public static void main(String[] args) throws IOException {
+        String repoPath = Path.patientWeb;
+        String comment = "12313213213";
+        CherryPick cherryPick = new CherryPick(repoPath, comment);
+        cherryPick.execute();
+    }
 
+    private Git git;
+    private String comment;
     // CherryPick 的提交数, 默认1
     private Integer cherryPickCount = 1;
-    private Git git;
 
-    public CherryPick(String repoPath, String username, String password, String comment) throws IOException {
-        this.username = username;
-        this.password = password;
+    public CherryPick(String repoPath, String comment) throws IOException {
         this.comment = comment;
         git = Git.open(new File(repoPath));
     }
 
     public void execute() {
-        CredentialsProvider cp = new UsernamePasswordCredentialsProvider(username, password);
+        CredentialsProvider cp = new UsernamePasswordCredentialsProvider(Constants.username, Constants.password);
 
         try {
             // 切换到dev分支
@@ -75,7 +77,7 @@ public class CherryPick {
             Iterable<RevCommit> commitLog = git.log().setRevFilter(new RevFilter() {
                 @Override
                 public boolean include(RevWalk walker, RevCommit cmit) throws StopWalkException, MissingObjectException, IncorrectObjectTypeException, IOException {
-                    return cmit.getAuthorIdent().getEmailAddress().equals(username);
+                    return cmit.getAuthorIdent().getEmailAddress().equals(Constants.username);
                 }
 
                 @Override
