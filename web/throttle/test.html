@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+</body>
+<script src="lodash.js"></script>
+<script type="text/javascript">
+
+let log = _.debounce(function (str) {
+  console.log(str)
+}, 2000, {leading:true, trailing:false})
+
+setInterval(() => {
+  log('1111111')
+}, 100)
+
+//
+// let oldLog = console.log
+// console.log = function () {
+//   let now = new Date().getTime()
+//   // lastTime不存在 或者 当前时间比上次执行大2秒
+//   if (!console.lastTime || ((now - console.lastTime) > 2000)) {
+//     console.lastTime = now
+//     oldLog.call(console, ...arguments)
+//   }
+// }
+//
+// setInterval(() => {
+//   console.log('1111111')
+// }, 100)
+
+</script>
+</html>

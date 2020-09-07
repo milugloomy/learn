@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<input onclick="clickMe()" type="button" value="点我">
+</body>
+<script>
+async function clickMe() {
+  const env = await getEnv()
+  console.log(env)
+}
+
+let localEnv
+let loading = false
+
+async function getEnv() {
+  if (localEnv) {
+    return localEnv
+  }
+  if (loading) {
+    // 同步非阻塞
+    while(loading) {
+      await wait(50)
+    }
+    return localEnv
+  } else {
+    loading = true
+    return new Promise((resolve, reject) => {
+      console.log('questing env......')
+      setTimeout(() => {
+        localEnv = {
+          platform: '141001',
+          appid: 'aoshdakhpa8fkdng'
+        }
+        loading = false
+        resolve(localEnv)
+      }, 2000)
+    })
+  }
+}
+
+function wait (time) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
+</script>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<button onclick="clickMe()">点我</button>
+</body>
+<script>
+let timeoutId
+
+!(async function main() {
+  await wait(3 * 1000)
+  console.log('timeout cleared')
+})()
+
+function wait(time) {
+  return new Promise(resolve => {
+    timeoutId = setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
+
+function clickMe() {
+  clearTimeout(timeoutId)
+}
+</script>
+</html>
