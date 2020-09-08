@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn">
 <head>
   <meta charset="UTF-8">
   <title>Title</title>
@@ -13,7 +13,7 @@ async function clickMe() {
   console.log(env)
 }
 
-let localEnv
+let localEnv, p
 const queue = []
 let loading = false
 
@@ -23,10 +23,7 @@ async function getEnv() {
       resolve(localEnv)
     }
     if (loading) {
-      const timeoutId = setTimeout(() => {
-        resolve()
-      }, 99999999)
-      queue.push({resolve, reject, timeoutId})
+      queue.push({resolve, reject})
     }
     if (!loading && !localEnv) {
       loading = true
@@ -38,11 +35,10 @@ async function getEnv() {
         }
         loading = false
         resolve(localEnv)
-        for (let i = 0; i < queue.length; i++) {
-          clearTimeout(queue[i].timeoutId)
-          queue[i].resolve(localEnv)
+        while (p = queue.shift()) {
+          p.resolve(localEnv)
         }
-      }, 1000)
+      }, 2000)
     }
   })
 }

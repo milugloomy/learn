@@ -9,14 +9,18 @@
 </body>
 <script>
 let timeoutId
+let resolveId
 
-!(async function main() {
+main()
+
+async function main() {
   await wait(3 * 1000)
   console.log('timeout cleared')
-})()
+}
 
 function wait(time) {
   return new Promise(resolve => {
+    resolveId = resolve
     timeoutId = setTimeout(() => {
       resolve()
     }, time)
@@ -25,6 +29,7 @@ function wait(time) {
 
 function clickMe() {
   clearTimeout(timeoutId)
+  resolveId()
 }
 </script>
 </html>

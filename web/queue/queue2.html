@@ -9,34 +9,31 @@
 </body>
 <script>
 const queue = []
+let index = 0
 
 async function clickMe() {
-  const env = await doIt()
-  console.log(env)
+  const res = await doIt()
+  console.log('已处理事件' + res)
 }
-
 function doIt() {
   return new Promise((resolve, reject) => {
-    let q = {resolve, reject}
+    let q = {resolve, reject, index: index++}
     queue.push(q)
-    console.log(queue.length)
     if (queue.length === 1) {
       next(q, true)
     }
   })
 }
-
 function next(nextPromise, first) {
   setTimeout(() => {
-    let res = parseInt(Math.random() * 100)
-    nextPromise.resolve(res)
+    nextPromise.resolve(nextPromise.index)
     let q = queue.shift()
     // 判断是否第一个，不然会执行2次队列的第一个
     if (first) {
       q = queue.shift()
     }
     q && next(q)
-  }, 2000)
+  }, 1000)
 }
 </script>
 </html>
