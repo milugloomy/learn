@@ -5,19 +5,18 @@
   <title>Title</title>
 </head>
 <body>
-<button id="input">点点点</button>
+<button onclick="clickMe()">点我</button>
 </body>
 <script>
 let queue = []
 let index = 0
-document.getElementById('input').addEventListener('click', function (e) {
-  queue.push({name: 'click', index: index++})
-}, false)
-main()
 
-function main () {
-  run()
+function clickMe() {
+  queue.push({name: 'click', index: index++})
 }
+
+run()
+
 async function run() {
   while (true) {
     try {
@@ -38,13 +37,7 @@ async function run() {
 function request(index) {
   return new Promise(function (resolve, reject) {
     setTimeout(() => {
-      setTimeout(() => {
-        if(index < 3)
-          resolve(index)
-        else {
-          reject('error')
-        }
-      }, 1000)
+      resolve(index)
     }, 1000)
   })
 }

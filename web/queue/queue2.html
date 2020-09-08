@@ -10,11 +10,9 @@
 <script>
 const queue = []
 
-function clickMe() {
-  doIt().then(env => {
-    let now = new Date()
-    console.log(now.getMinutes() + ':' + now.getSeconds(), env)
-  })
+async function clickMe() {
+  const env = await doIt()
+  console.log(env)
 }
 
 function doIt() {
