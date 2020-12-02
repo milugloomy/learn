@@ -6580,7 +6580,7 @@
     var isCreate = oldVnode === emptyNode;
     var isDestroy = vnode === emptyNode;
     var oldDirs = normalizeDirectives$1(oldVnode.data.directives, oldVnode.context);
-    var newDirs = normalizeDirectives$1(vnode.data.directives, vnode.context);
+      var newDirs = normalizeDirectives$1(vnode.data.directives, vnode.context);
 
     var dirsWithInsert = [];
     var dirsWithPostpatch = [];
