@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<div id="app">
+  <button v-on:click="change">change</button>
+  <keep-alive>
+    <button-counter t="a" v-if="a"></button-counter>
+  </keep-alive>
+  <keep-alive>
+    <button-counter t="b" v-if="!a"></button-counter>
+  </keep-alive>
+</div>
+<script src="vue.js"></script>
+<script>
+  Vue.component('button-counter', {
+    props: {
+      t: String
+    },
+    data: function () {
+      return {
+        count: 0
+      }
+    },
+    template: '<button v-on:click="count++">{{t}}, You clicked me {{ count }} times.</button>'
+  })
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        a: false
+      }
+    },
+    methods: {
+      change() {
+        this.a = !this.a
+      }
+    }
+  })
+</script>
+</body>
+</html>
